@@ -1,0 +1,11 @@
+nRows = 576;
+dx = 0.0112;
+dy = 0.0112;
+nCols = 720;
+model = "constant velocity";
+
+# for USB camera mode please type usb_cam for input_mode,
+# other types mean getting input images from file
+input_mode = filegrabber;
+input_name = images;
+
