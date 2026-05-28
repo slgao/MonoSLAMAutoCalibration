@@ -147,29 +147,15 @@ As the filter bank accumulates observations, ellipses shrink — reflecting redu
 
 ### Frame-by-frame progression (step 344 → 441)
 
-**Step 344 — Initialisation** · All features newly detected, large red search regions
+| Step 344 — Initialisation | Step 350 — Early tracking | Step 360 — Building map |
+|:-:|:-:|:-:|
+| Large red search regions | Red/blue mix, camera moving | Blue features appearing |
+| <img src="docs/track_s344.jpg" width="240"/> | <img src="docs/track_s350.jpg" width="240"/> | <img src="docs/track_s360.jpg" width="240"/> |
 
-![step 344](docs/track_s344.jpg)
-
-**Step 350 — Early tracking** · Camera moves, mix of red (new) and blue (tracked) features
-
-![step 350](docs/track_s350.jpg)
-
-**Step 360 — Building the map** · More blue features, ellipses beginning to tighten
-
-![step 360](docs/track_s360.jpg)
-
-**Step 380 — Established tracking** · Majority of features now blue, search regions noticeably smaller
-
-![step 380](docs/track_s380.jpg)
-
-**Step 415 — Dense map** · Large number of tightly-bounded blue features, few red outliers
-
-![step 415](docs/track_s415.jpg)
-
-**Step 441 — Converged** · Only a handful of features remain visible; ellipses are small and compact — the filter has converged
-
-![step 441](docs/track_s441.jpg)
+| Step 380 — Established tracking | Step 415 — Dense map | Step 441 — Converged |
+|:-:|:-:|:-:|
+| Mostly blue, ellipses tightening | Tight blue ellipses, few red | Small compact ellipses |
+| <img src="docs/track_s380.jpg" width="240"/> | <img src="docs/track_s415.jpg" width="240"/> | <img src="docs/track_s441.jpg" width="240"/> |
 
 > The circular field of view and radial barrel distortion are characteristic of the wide-angle endoscope optics. The GSF estimates `f`, `Cx`, `Cy`, `k1`, `k2` online from exactly this imagery — no calibration target required.
 
