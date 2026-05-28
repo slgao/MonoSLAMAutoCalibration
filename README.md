@@ -153,15 +153,23 @@ The principal point converges reliably to stable values; residual focal-length v
 
 ## Academic Context
 
-This work implements and extends the **Gaussian Sum Filter approach for online camera self-calibration** within the MonoSLAM framework, applied to the constrained domain of minimally invasive surgical imaging.
+This project is a direct implementation of the **Gaussian Sum Filter for online camera self-calibration** described in:
 
-Foundational references:
+> **J. Civera, A. J. Davison, and J. M. M. Montiel**,
+> "Inverse Depth Parametrization for Monocular SLAM,"
+> *IEEE Transactions on Robotics*, vol. 24, no. 5, pp. 932–945, Oct. 2008.
+> DOI: [10.1109/TRO.2008.2003276](https://doi.org/10.1109/TRO.2008.2003276) · [PDF](https://webdiis.unizar.es/~jcivera/papers/civera_etal_tro08.pdf)
 
-- Davison, A. J. et al. — *MonoSLAM: Real-Time Single Camera SLAM*, IEEE TPAMI 2007
-- Civera, J., Davison, A. J., Montiel, J. M. M. — *Inverse Depth Parametrization for Monocular SLAM*, IEEE T-RO 2008
-- Sinha, S. N., Pollefeys, M. — *Camera Network Calibration from Dynamic Silhouettes*, CVPR 2004
+The paper introduces two key contributions implemented here:
+1. **Inverse depth parametrization** for monocular feature initialisation, improving EKF linearisation accuracy over Cartesian coordinates
+2. **Gaussian Sum Filter** (Section IV) — a bank of EKFs with different camera intrinsic hypotheses, pruned via a Sequential Probability Ratio Test, enabling online self-calibration without a calibration target
 
-> If you know the specific paper this thesis is based on, please open a PR to add the citation here.
+The application to surgical endoscope cameras (SCOPIS system, 720×576) extends the method to a medical imaging domain where intrinsics change actively during use.
+
+Additional references:
+
+- Davison, A. J. et al. — *MonoSLAM: Real-Time Single Camera SLAM*, IEEE TPAMI, vol. 29, no. 6, 2007
+- Civera, J., Grasa, O. G., Davison, A. J., Montiel, J. M. M. — *1-Point RANSAC for EKF Filtering*, IROS 2009
 
 ---
 
