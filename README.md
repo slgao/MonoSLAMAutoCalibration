@@ -136,20 +136,42 @@ The filter bank starts with 108 parallel hypotheses and prunes down as the SPRT 
 
 ---
 
-## Feature Tracking Visualisation
+## Feature Tracking & Uncertainty Convergence
 
-Three annotated frames from the 720×576 SCOPIS surgical endoscope sequence.  
-Each ellipse is the EKF **predicted search region** for a tracked feature; the dot is the **measured position**.
+Each ellipse is the EKF **predicted search region** for a map feature; the dot is the **measured pixel position**.  
+As the filter bank accumulates observations, ellipses shrink — reflecting reduced uncertainty in both feature positions and camera intrinsics.
 
 | 🔴 Red ellipse | 🔵 Blue ellipse |
 |---|---|
-| Predicted measurement uncertainty (high — fewer observations) | Established feature (low uncertainty — well-tracked) |
+| High uncertainty — newly initialised or rarely observed | Low uncertainty — well-established, frequently matched |
 
-| Initialisation (step 344) | Tracking (step 380) | Mature map (step 428) |
-|:-:|:-:|:-:|
-| ![Tracking early](docs/tracking_early.jpg) | ![Tracking mid](docs/tracking_mid.jpg) | ![Tracking late](docs/tracking_late.jpg) |
+### Frame-by-frame progression (step 344 → 441)
 
-The circular field of view and radial distortion are characteristic of the wide-angle endoscope lens — the intrinsic parameters being estimated online by the GSF.
+**Step 344 — Initialisation** · All features newly detected, large red search regions
+
+![step 344](docs/track_s344.jpg)
+
+**Step 350 — Early tracking** · Camera moves, mix of red (new) and blue (tracked) features
+
+![step 350](docs/track_s350.jpg)
+
+**Step 360 — Building the map** · More blue features, ellipses beginning to tighten
+
+![step 360](docs/track_s360.jpg)
+
+**Step 380 — Established tracking** · Majority of features now blue, search regions noticeably smaller
+
+![step 380](docs/track_s380.jpg)
+
+**Step 415 — Dense map** · Large number of tightly-bounded blue features, few red outliers
+
+![step 415](docs/track_s415.jpg)
+
+**Step 441 — Converged** · Only a handful of features remain visible; ellipses are small and compact — the filter has converged
+
+![step 441](docs/track_s441.jpg)
+
+> The circular field of view and radial barrel distortion are characteristic of the wide-angle endoscope optics. The GSF estimates `f`, `Cx`, `Cy`, `k1`, `k2` online from exactly this imagery — no calibration target required.
 
 ---
 
