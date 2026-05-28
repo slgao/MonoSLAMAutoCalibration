@@ -136,13 +136,20 @@ The filter bank starts with 108 parallel hypotheses and prunes down as the SPRT 
 
 ---
 
-## Sample Input — SCOPIS Endoscope Frames
+## Feature Tracking Visualisation
 
-Three frames from the 720×576 surgical endoscope sequence used for evaluation:
+Three annotated frames from the 720×576 SCOPIS surgical endoscope sequence.  
+Each ellipse is the EKF **predicted search region** for a tracked feature; the dot is the **measured position**.
 
-| Early (step 0) | Mid (step 344) | Late (step 700) |
+| 🔴 Red ellipse | 🔵 Blue ellipse |
+|---|---|
+| Predicted measurement uncertainty (high — fewer observations) | Established feature (low uncertainty — well-tracked) |
+
+| Initialisation (step 344) | Tracking (step 380) | Mature map (step 428) |
 |:-:|:-:|:-:|
-| ![Early frame](docs/frame_early.jpg) | ![Mid frame](docs/frame_mid.jpg) | ![Late frame](docs/frame_late.jpg) |
+| ![Tracking early](docs/tracking_early.jpg) | ![Tracking mid](docs/tracking_mid.jpg) | ![Tracking late](docs/tracking_late.jpg) |
+
+The circular field of view and radial distortion are characteristic of the wide-angle endoscope lens — the intrinsic parameters being estimated online by the GSF.
 
 ---
 
