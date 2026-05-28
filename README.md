@@ -136,6 +136,24 @@ The filter bank starts with 108 parallel hypotheses and prunes down as the SPRT 
 
 ---
 
+## Sample Input — SCOPIS Endoscope Frames
+
+Three frames from the 720×576 surgical endoscope sequence used for evaluation:
+
+| Early (step 0) | Mid (step 344) | Late (step 700) |
+|:-:|:-:|:-:|
+| ![Early frame](docs/frame_early.jpg) | ![Mid frame](docs/frame_mid.jpg) | ![Late frame](docs/frame_late.jpg) |
+
+---
+
+## Convergence Plot
+
+Focal length, principal point, and active filter count over the sequence. The filter bank starts with 108 hypotheses and is pruned by the SPRT until a single estimate remains.
+
+![Convergence plot](docs/convergence_plot.png)
+
+---
+
 ## Results
 
 Tested on a 720×576 SCOPIS endoscope sequence. The GSF converges within ~200 frames:
