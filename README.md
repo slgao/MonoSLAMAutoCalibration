@@ -145,6 +145,16 @@ As the filter bank accumulates observations, ellipses shrink — reflecting redu
 |---|---|
 | High uncertainty — newly initialised or rarely observed | Low uncertainty — well-established, frequently matched |
 
+### Tracking animation (step 344 → 441)
+
+<video src="docs/tracking.mp4" controls loop width="640"></video>
+
+*If the video does not render, view the animation below or [download the MP4](docs/tracking.mp4).*
+
+![Feature tracking animation](docs/tracking.gif)
+
+---
+
 ### Frame-by-frame progression (step 344 → 441)
 
 | Step 344 — Initialisation | Step 350 — Early tracking | Step 360 — Building map |
