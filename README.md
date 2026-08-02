@@ -71,7 +71,8 @@ Mono_Exp_EndoIm/
 ├── Camera.h / .cpp        # Intrinsic parameter model
 ├── DataAssociator.h / .cpp # Feature matching & data association
 ├── MathUtil.h / .cpp      # Quaternion / Jacobian utilities
-└── Calibration_results/   # Output logs (f, Cx, Cy, k1, k2 per frame)
+├── cali_results.txt       # Output log of the current run (720×576 sequence)
+└── Calibration_results/   # Archived logs from an earlier 320×240 sequence
 ```
 
 ---
@@ -125,14 +126,24 @@ int lastIm  = 900;   // last frame
 4. Run the binary — calibration estimates are appended to `cali_results.txt`:
 
 ```
-frame   f (px)    Cx (px)   Cy (px)   k1       k2       filters_alive
-344     247.546   160.000   120.000   0.04059  0.00878   108
-345     203.928   159.937   119.886   0.04152  0.00907   108
+frame   f (px)    Cx (px)   Cy (px)   k1        k2        filters_alive
+344     490.873   362.551   291.323   0.041420  0.009722   72
+345     498.592   363.407   293.725   0.021161  0.003104   19
 ...
-400     172.683   158.286   119.550   0.05592  0.01459     4
+353     500.035   363.253   295.252   0.020013  0.003002    1
+...
+441     433.478   354.582   285.387   0.019108  0.002792    1
 ```
 
-The filter bank starts with 108 parallel hypotheses and prunes down as the SPRT accumulates evidence.
+Each row has 17 columns: the 7 shown above, followed by the ±3σ bounds for
+`f`, `Cx`, `Cy`, `k1`, `k2` (two columns each). Note that `k1` and `k2` are in
+`1/mm²` and `1/mm⁴` — the radial distortion is applied to a *metric* radius
+obtained via the pixel pitch `dx` from `camdata/cam.txt`, so these are not the
+dimensionless coefficients used by OpenCV.
+
+The filter bank is built with 108 parallel hypotheses (18 focal lengths × 2 `k1`
+× 3 `k2`, see `FilterBank::initialize_filterbank`). Pruning happens inside the
+first processed frame, so the first logged row already shows 72 survivors.
 
 ---
 
@@ -173,7 +184,11 @@ As the filter bank accumulates observations, ellipses shrink — reflecting redu
 
 ## Convergence Plot
 
-Focal length, principal point, and active filter count over the sequence. The filter bank starts with 108 hypotheses and is pruned by the SPRT until a single estimate remains.
+Focal length, principal point, and active filter count over the 720×576
+sequence, plotted from `Mono_Exp_EndoIm/cali_results.txt`. Dashed lines mark the
+offline SCOPIS calibration; the shaded band on `f` is the ±3σ the filter reports.
+The bank is built with 108 hypotheses, drops to 72 within the first frame, and
+reaches a single survivor at frame 353.
 
 ![Convergence plot](docs/convergence_plot.png)
 
@@ -181,16 +196,33 @@ Focal length, principal point, and active filter count over the sequence. The fi
 
 ## Results
 
-Tested on a 720×576 SCOPIS endoscope sequence. The GSF converges within ~200 frames:
+Tested on a 720×576 SCOPIS endoscope sequence, steps 344–441 (98 frames).
+The bank is pruned to a single surviving hypothesis at frame 353 — nine frames
+in — after which the run is effectively a single EKF refining that hypothesis.
 
-| Parameter | Converged estimate |
-|-----------|-------------------|
-| Focal length `f` | ~172–186 px |
-| Principal point `(Cx, Cy)` | ~(158, 119) px |
-| Radial distortion `k1` | ~0.054 |
-| Radial distortion `k2` | ~0.015 |
+Values below are the mean over the last 20 frames (422–441), compared against
+the offline SCOPIS calibration that the code carries as its reference baseline
+(`Kalman.cpp`, `hi_cartesian_scopis`):
 
-The principal point converges reliably to stable values; residual focal-length variation is consistent with active zoom adjustment on the live endoscope.
+| Parameter | GSF estimate | SCOPIS reference | Difference |
+|-----------|--------------|------------------|------------|
+| Focal length `f` | 433.1 px | 440 px | −1.6 % |
+| Principal point `Cx` | 354.6 px | 340 px | +14.6 px |
+| Principal point `Cy` | 285.4 px | 277 px | +8.4 px |
+| Radial distortion `k1` | 0.01911 1/mm² | 0.0101 1/mm² | +89 % |
+| Radial distortion `k2` | 0.002792 1/mm⁴ | 0.00146 1/mm⁴ | +91 % |
+
+Focal length lands within 2 % of the reference. The principal point settles to a
+stable value 8–15 px away from it, and the two distortion coefficients come out
+roughly twice the reference — at the edge of the endoscope's circular field of
+view (r ≈ 350 px) that is a radial magnification of 1.95 against the reference's
+1.50.
+
+The ±3σ interval reported in `cali_results.txt` narrows to ±4.3 px on `f` and
+±0.5 px on `Cx` by frame 441, which does not bracket the reference for any of
+the five parameters. The intrinsic states carry no process noise, so once the
+bank has collapsed their covariance can only shrink; the reported interval
+should be read as filter self-consistency, not as accuracy.
 
 ---
 
